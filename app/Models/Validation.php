@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Validator;
 use Illuminate\Database\Eloquent\Model;
 
 class Validation extends Model
@@ -18,4 +19,14 @@ class Validation extends Model
         'reason_accepted',
         'validator_notes'
     ];
+
+    protected $hidden = [
+        'society_id',
+        'validator_id'
+    ];
+
+    public function validator()
+    {
+        return $this->belongsTo(Validator::class);
+    }
 }

@@ -33,4 +33,20 @@ class DataValidationController extends Controller
 
         return response()->json(['message' => "Request data validation sent successful"]);
     }
+
+    public function getValidationStatus(Request $request)
+    {
+        $currentToken = request()->bearerToken();
+        [$id, $token] = explode('|', $currentToken, 2);
+        $hashedToken = DB::table('personal_access_tokens')->find($id)->token;
+        $authId = DB::table('personal_access_tokens')->find($id)->tokenable_id;
+        $tokensMatch = (hash_equals($hashedToken, hash('sha256', $token))) ? true : false;
+
+        if (!$tokensMatch) {
+            return response()->json(['message' => 'Unauthorized user'], 401);
+        }
+
+        $validations = Validation::with(['validator'])->where('society_id', '=', $authId)->get();
+        return response()->json($validations);
+    }
 }
