@@ -29,7 +29,7 @@ class AuthController extends Controller
                 'token' => $token,
                 'regional' => $society->regional
             ];
-            return response()->json($data, 200);
+            return response()->json($data);
         }
         return response()->json([
             'message' => "ID Card Number or Password incorrect",
@@ -38,6 +38,8 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Logout success']);
     }
 }
