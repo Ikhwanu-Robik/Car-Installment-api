@@ -19,4 +19,5 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('/instalment_cars/{id}', [InstallmentController::class, 'findCar']);
 
     Route::post('/applications', [InstallmentController::class, 'applyForInstallment']);
+    Route::get('/applications', [InstallmentController::class, 'getInstallment']);
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AvailableMonth;
 use App\Models\Society;
 use App\Models\Validation;
 use App\Models\Installment;
@@ -78,5 +79,35 @@ class InstallmentController extends Controller
         InstallmentApplySocieties::create($validated);
 
         return response()->json(["message" => "Applying for Instalment successful"]);
+    }
+
+    public function getInstallment(Request $request) {
+        $bearerToken = explode('|', $request->bearerToken());
+        $tokenId = $bearerToken[0];
+        $tokenUnhashed = $bearerToken[1];
+
+        $personalAccessToken = DB::table('personal_access_tokens')->where('id', '=', $tokenId)->first();
+        if (!hash_equals($personalAccessToken->token, hash('sha256', $tokenUnhashed))) {
+            return response()->json(['message' => "Unauthorized user"], 401);
+        }
+
+        $installments = Installment::with("applications")->where('installment_apply_societies.society_id', '=', $personalAccessToken->tokenable_id)->join('brand', 'installment.brand_id', '=', 'brand.id')->join("installment_apply_societies", "installment.id", "installment_apply_societies.installment_id")->get(['installment.id', 'cars AS car', 'brand.brand AS brand', 'price', 'description']);
+        $available_month = AvailableMonth::all();
+
+        $installment_month_id = [];
+        foreach ($installments as $installment) {
+            foreach ($installment->applications as $application) {
+                $month_model = $available_month->find($application->available_month_id);
+
+                $application["month"] = $month_model->month;
+                $application["nominal"] = $month_model->nominal;
+
+                unset($application["available_month_id"]);
+            }
+        }
+
+        return response()->json([
+            "installments" => $installments
+        ]);
     }
 }

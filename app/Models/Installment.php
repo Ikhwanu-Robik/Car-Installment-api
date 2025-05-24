@@ -19,4 +19,8 @@ class Installment extends Model
     public function availableMonth() {
         return $this->hasMany(AvailableMonth::class);
     }
+
+    public function applications() {
+        return $this->hasMany(InstallmentApplySocieties::class);
+    }
 }

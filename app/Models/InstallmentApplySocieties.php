@@ -11,10 +11,17 @@ class InstallmentApplySocieties extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        "notes",
         "available_month_id",
         "date",
         "society_id",
+        "installment_id",
+        "apply_status",
+        "notes",
+    ];
+    protected $hidden = [
+        "id",
+        "society_id",
+        "date",
         "installment_id"
     ];
 }
