@@ -1,5 +1,6 @@
 <?php
 
+use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Auth\AuthenticationException;
