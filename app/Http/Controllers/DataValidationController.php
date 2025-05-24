@@ -20,16 +20,18 @@ class DataValidationController extends Controller
 
         $currentToken = request()->bearerToken();
         [$id, $token] = explode('|', $currentToken, 2);
-        $hashedToken = DB::table('personal_access_tokens')->find($id)->token;
-        $tokensMatch = (hash_equals($hashedToken, hash('sha256', $token))) ? true : false;
+        $tokenData = DB::table('personal_access_tokens')->find($id);
+        $tokensMatch = (hash_equals($tokenData->token, hash('sha256', $token))) ? true : false;
 
         if (!$tokensMatch) {
             return response()->json(['message' => 'Unauthorized user'], 401);
         }
 
-        $validated['society_id'] = $request->user()->id;
+        $validated['society_id'] = $tokenData->tokenable_id;
 
-        Validation::create($validated);
+        if (!Validation::where('society_id', '=', $validated['society_id'])) {
+            Validation::create($validated);
+        }
 
         return response()->json(['message' => "Request data validation sent successful"]);
     }
@@ -38,15 +40,14 @@ class DataValidationController extends Controller
     {
         $currentToken = request()->bearerToken();
         [$id, $token] = explode('|', $currentToken, 2);
-        $hashedToken = DB::table('personal_access_tokens')->find($id)->token;
-        $authId = DB::table('personal_access_tokens')->find($id)->tokenable_id;
-        $tokensMatch = (hash_equals($hashedToken, hash('sha256', $token))) ? true : false;
+        $tokenData = DB::table('personal_access_tokens')->find($id);
+        $tokensMatch = (hash_equals($tokenData->token, hash('sha256', $token))) ? true : false;
 
         if (!$tokensMatch) {
             return response()->json(['message' => 'Unauthorized user'], 401);
         }
 
-        $validations = Validation::with(['validator'])->where('society_id', '=', $authId)->get();
+        $validations = Validation::with(['validator'])->where('society_id', '=', $tokenData->tokenable_id)->get();
         return response()->json($validations);
     }
 }
