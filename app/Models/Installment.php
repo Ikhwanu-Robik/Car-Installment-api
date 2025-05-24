@@ -17,6 +17,6 @@ class Installment extends Model
     ];
 
     public function availableMonth() {
-        return $this->hasOne(AvailableMonth::class);
+        return $this->hasMany(AvailableMonth::class);
     }
 }
