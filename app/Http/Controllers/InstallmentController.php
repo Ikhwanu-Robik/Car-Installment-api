@@ -24,8 +24,24 @@ class InstallmentController extends Controller
         $society = Society::find($personalAccessToken->tokenable_id);
         $validation = Validation::where('society_id', '=', $society->id)->first();
 
-        $installments = Installment::with('availableMonth')->where('price', '<', $validation->income)->join('brand', 'installment.brand_id', '=', 'brand.id')->get(['installment.id', 'cars AS car','brand.brand AS brand', 'description', 'price']);
+        $installments = Installment::with('availableMonth')->where('price', '<', $validation->income)->join('brand', 'installment.brand_id', '=', 'brand.id')->get(['installment.id', 'cars AS car', 'brand.brand AS brand', 'description', 'price']);
 
         return response()->json(['cars' => $installments]);
+    }
+
+    public function findCar(Request $request, $id)
+    {
+        $bearerToken = explode('|', $request->bearerToken());
+        $tokenId = $bearerToken[0];
+        $tokenUnhashed = $bearerToken[1];
+
+        $personalAccessToken = DB::table('personal_access_tokens')->where('id', '=', $tokenId)->first();
+        if (!hash_equals($personalAccessToken->token, hash('sha256', $tokenUnhashed))) {
+            return response()->json(['message' => "Unauthorized user"], 401);
+        }
+
+        $installment = Installment::with('availableMonth')->where('installment.id', '=', $id)->join('brand', 'installment.brand_id', '=', 'brand.id')->get(['installment.id', 'cars AS car', 'brand.brand AS brand', 'description', 'price'])->first();
+
+        return response()->json(['installment' => $installment]);
     }
 }

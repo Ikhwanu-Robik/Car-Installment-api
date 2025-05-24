@@ -16,4 +16,5 @@ Route::group(['prefix' => '/v1'], function () {
     Route::get('/validations', [DataValidationController::class, 'getValidationStatus']);
 
     Route::get('/instalment_cars', [InstallmentController::class, 'getCars']);
+    Route::get('/instalment_cars/{id}', [InstallmentController::class, 'findCar']);
 });
