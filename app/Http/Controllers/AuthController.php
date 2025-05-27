@@ -13,14 +13,37 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validated = $request->validate([
-            'id_card_number' => 'required|numeric',
+            'username' => "sometimes",
+            'id_card_number' => 'sometimes|numeric',
             'password' => 'required'
         ]);
 
-        if (Auth::attempt($validated)) {
-            $society = Society::where('id_card_number', '=', $validated['id_card_number'])->first();
-            $token = $society->createToken("EGG")->plainTextToken;
+        $isUser = isset($validated["username"]) ? true : false;
+        $isSociety = isset($validated["id_card_number"]) ? true : false;
 
+        $credentials = [];
+
+        if ($isUser) {
+            $credentials = [
+                "username" => $validated["username"],
+                "password" => $validated["password"]
+            ];
+        } else if ($isSociety) {
+            $credentials = [
+                "id_card_number" => $validated["id_card_number"],
+                "password" => $validated["password"]
+            ];
+        }
+
+        if ($isUser && Auth::guard('web')->attempt($credentials)) {
+            $user = Auth::user()->with('validator')->first();
+
+            return response()->json(["message" => "Logged in as validator", "user" => $user, "token" => $user->createToken("GGE")->plainTextToken]);
+        }
+        
+        if ($isSociety && Auth::guard('society')->attempt($credentials)) {
+            $society = Society::where("id_card_number", "=", $credentials["id_card_number"])->first();
+            $token = $society->createToken("EGG")->plainTextToken;
             $data = [
                 'name' => $society->name,
                 'born_date' => $society->born_date,
@@ -29,11 +52,15 @@ class AuthController extends Controller
                 'token' => $token,
                 'regional' => $society->regional
             ];
+
             return response()->json($data);
         }
-        return response()->json([
-            'message' => "ID Card Number or Password incorrect",
-        ], 401);
+
+        if ($isUser) {
+            return response()->json(["message" => "username or password incorrect"], 401);   
+        } else if ($isSociety) {
+            return response()->json(["message" => "ID Card Number or Password incorrect"], 401);
+        }
     }
 
     public function logout(Request $request)

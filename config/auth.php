@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'society' => [
+            'driver' => 'session',
+            'provider' => 'societies'
+        ],
     ],
 
     /*
@@ -62,7 +66,11 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\Society::class),
+            'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
+        'societies' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Society::class,
         ],
 
         // 'users' => [
@@ -97,6 +105,13 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        // TODO : consider to implement this
+        // 'societies' => [
+        //     'provider' => 'societies',
+        //     'table' => 'password_reset_tokens',
+        //     'expire' => 60,
+        //     'throttle' => 60,
+        // ],
     ],
 
     /*
