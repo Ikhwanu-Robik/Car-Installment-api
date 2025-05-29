@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Validation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class DataValidationController extends Controller
@@ -18,7 +19,7 @@ class DataValidationController extends Controller
             'reason_accepted' => 'required|string'
         ]);
 
-        $currentToken = request()->bearerToken();
+        $currentToken = $request->bearerToken();
         [$id, $token] = explode('|', $currentToken, 2);
         $tokenData = DB::table('personal_access_tokens')->find($id);
         $tokensMatch = (hash_equals($tokenData->token, hash('sha256', $token))) ? true : false;
@@ -29,8 +30,9 @@ class DataValidationController extends Controller
 
         $validated['society_id'] = $tokenData->tokenable_id;
 
-        if (!Validation::where('society_id', '=', $validated['society_id'])) {
+        if (!Validation::where('society_id', '=', $validated['society_id'])->first()) {
             Validation::create($validated);
+            Log::info("creating validaton");
         }
 
         return response()->json(['message' => "Request data validation sent successful"]);
@@ -38,7 +40,7 @@ class DataValidationController extends Controller
 
     public function getValidationStatus(Request $request)
     {
-        $currentToken = request()->bearerToken();
+        $currentToken = $request->bearerToken();
         [$id, $token] = explode('|', $currentToken, 2);
         $tokenData = DB::table('personal_access_tokens')->find($id);
         $tokensMatch = (hash_equals($tokenData->token, hash('sha256', $token))) ? true : false;
