@@ -22,6 +22,9 @@ class DataValidationController extends Controller
         $currentToken = $request->bearerToken();
         [$id, $token] = explode('|', $currentToken, 2);
         $tokenData = DB::table('personal_access_tokens')->find($id);
+        if (!$tokenData) {
+            return response()->json(['message' => "Unauthorized user"], 401);
+        }
         $tokensMatch = (hash_equals($tokenData->token, hash('sha256', $token))) ? true : false;
 
         if (!$tokensMatch) {
@@ -43,6 +46,9 @@ class DataValidationController extends Controller
         $currentToken = $request->bearerToken();
         [$id, $token] = explode('|', $currentToken, 2);
         $tokenData = DB::table('personal_access_tokens')->find($id);
+        if (!$tokenData) {
+            return response()->json(['message' => "Unauthorized user"], 401);
+        }
         $tokensMatch = (hash_equals($tokenData->token, hash('sha256', $token))) ? true : false;
 
         if (!$tokensMatch) {

@@ -20,6 +20,9 @@ class InstallmentController extends Controller
         $tokenUnhashed = $bearerToken[1];
 
         $personalAccessToken = DB::table('personal_access_tokens')->where('id', '=', $tokenId)->first();
+        if (!$personalAccessToken) {
+            return response()->json(['message' => "Unauthorized user"], 401);
+        }
         if (!hash_equals($personalAccessToken->token, hash('sha256', $tokenUnhashed))) {
             return response()->json(['message' => "Unauthorized user"], 401);
         }
@@ -39,6 +42,9 @@ class InstallmentController extends Controller
         $tokenUnhashed = $bearerToken[1];
 
         $personalAccessToken = DB::table('personal_access_tokens')->where('id', '=', $tokenId)->first();
+        if (!$personalAccessToken) {
+            return response()->json(['message' => "Unauthorized user"], 401);
+        }
         if (!hash_equals($personalAccessToken->token, hash('sha256', $tokenUnhashed))) {
             return response()->json(['message' => "Unauthorized user"], 401);
         }
@@ -57,6 +63,9 @@ class InstallmentController extends Controller
         $tokenUnhashed = $bearerToken[1];
 
         $personalAccessToken = DB::table('personal_access_tokens')->where('id', '=', $tokenId)->first();
+        if (!$personalAccessToken) {
+            return response()->json(['message' => "Unauthorized user"], 401);
+        }
         if (!hash_equals($personalAccessToken->token, hash('sha256', $tokenUnhashed))) {
             return response()->json(['message' => "Unauthorized user"], 401);
         }
@@ -81,12 +90,16 @@ class InstallmentController extends Controller
         return response()->json(["message" => "Applying for Instalment successful"]);
     }
 
-    public function getInstallment(Request $request) {
+    public function getInstallment(Request $request)
+    {
         $bearerToken = explode('|', $request->bearerToken());
         $tokenId = $bearerToken[0];
         $tokenUnhashed = $bearerToken[1];
 
         $personalAccessToken = DB::table('personal_access_tokens')->where('id', '=', $tokenId)->first();
+        if (!$personalAccessToken) {
+            return response()->json(['message' => "Unauthorized user"], 401);
+        }
         if (!hash_equals($personalAccessToken->token, hash('sha256', $tokenUnhashed))) {
             return response()->json(['message' => "Unauthorized user"], 401);
         }
