@@ -9,6 +9,7 @@ class AvailableMonth extends Model
     protected $table = "available_month";
 
     protected $fillable = [
+        'id',
         'installment_id',
         'month',
         'description',
@@ -16,7 +17,6 @@ class AvailableMonth extends Model
     ];
 
     protected $hidden = [
-        'id',
         'installment_id',
     ];
 }
