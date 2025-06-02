@@ -75,6 +75,13 @@ class InstallmentController extends Controller
             return response()->json(["message" => "Your data validator must be accepted by validator before"], 401);
         }
 
+        $available_month = AvailableMonth::find($validated["available_month_id"]);
+        if ($validation->income < $available_month->nominal) {
+            return response()->json(["message" => "Your income must be equal to or greater than the instalment"]);
+        }
+
+        // TODO : Can apply for a instalment ONLY IF the income equal or exceed the calculation per month
+
         $validated["installment_id"] = $validated["instalment_id"];
         $validated["date"] = now()->format("Y-m-d");
         $validated["society_id"] = $personalAccessToken->tokenable_id;
