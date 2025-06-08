@@ -30,7 +30,7 @@ class InstallmentController extends Controller
         $society = Society::find($personalAccessToken->tokenable_id);
         $validation = Validation::where('society_id', '=', $society->id)->first();
 
-        $installments = Installment::with('availableMonth')->where('price', '<', $validation->income)->join('brand', 'installment.brand_id', '=', 'brand.id')->get(['installment.id', 'cars AS car', 'brand.brand AS brand', 'description', 'price']);
+        $installments = Installment::with('availableMonth')->join('brand', 'installment.brand_id', '=', 'brand.id')->get(['installment.id', 'cars AS car', 'brand.brand AS brand', 'description', 'price']);
 
         return response()->json(['cars' => $installments]);
     }
