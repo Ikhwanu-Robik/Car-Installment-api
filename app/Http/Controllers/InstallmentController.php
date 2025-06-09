@@ -141,4 +141,27 @@ class InstallmentController extends Controller
 
         return response()->json(["installment_applications" => $installments]);
     }
+
+    public function setInstallmentApplicationStatus(Request $request, InstallmentApplySocieties $installment) {
+        $validated = $request->validate(["status" => "required"]);
+
+        $valid_status = ["accepted", "rejected"];
+
+        $isStatusValid = false;
+        foreach ($valid_status as $stat) {
+            if ($validated["status"] == $stat) {
+                $isStatusValid = true;
+                break;
+            }
+        }
+
+        if (!$isStatusValid) {
+            return response()->json(["message" => "the status must be either 'accepted' or 'rejected'"], 422);
+        }
+
+        $installment->apply_status = $validated["status"];
+        $installment->save();
+
+        return response()->json(["message" => "installment application status changed"]);
+    }
 }

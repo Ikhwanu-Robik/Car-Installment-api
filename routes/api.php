@@ -29,4 +29,5 @@ Route::group(['prefix' => '/v1/validators', 'middleware' => ['auth:sanctum', Ens
     Route::post('/validations/{validation}', [DataValidationController::class, "setValidationStatus"]);
 
     Route::get('/installments', [InstallmentController::class, "getInstallmentApplicationRequests"]);
+    Route::post("/installments/{installment}", [InstallmentController::class, "setInstallmentApplicationStatus"]);
 });
