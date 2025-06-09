@@ -58,4 +58,10 @@ class DataValidationController extends Controller
         $validations = Validation::with(['validator'])->where('society_id', '=', $tokenData->tokenable_id)->get();
         return response()->json($validations);
     }
+
+    public function getValidationRequests(Request $request) {
+        $validations = Validation::with('validator')->get();
+
+        return response()->json(["validations" => $validations]);
+    }
 }
