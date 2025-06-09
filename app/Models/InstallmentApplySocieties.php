@@ -24,4 +24,16 @@ class InstallmentApplySocieties extends Model
         "date",
         "installment_id"
     ];
+
+    public function society() {
+        return $this->belongsTo(Society::class);
+    }
+
+    public function installment() {
+        return $this->belongsTo(Installment::class);
+    }
+
+    public function availableMonth() {
+        return $this->belongsTo(AvailableMonth::class);
+    }
 }

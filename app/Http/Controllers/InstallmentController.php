@@ -130,4 +130,15 @@ class InstallmentController extends Controller
             "installments" => $installments
         ]);
     }
+
+    public function getInstallmentApplicationRequests(Request $request)
+    {
+        $installments = DB::table("installment_apply_societies")
+        ->join("societies", "installment_apply_societies.society_id", "=", "societies.id")
+        ->join("installment", "installment_apply_societies.installment_id", "=", "installment.id")
+        ->join("available_month", "installment_apply_societies.available_month_id", "=", "available_month.id")
+        ->get(["installment_apply_societies.id", "date", "apply_status", "notes", "id_card_number", "name", "cars AS car_name", "price", "month", "nominal"]);
+
+        return response()->json(["installment_applications" => $installments]);
+    }
 }

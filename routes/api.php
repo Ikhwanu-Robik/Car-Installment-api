@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureUserIsValidator;
+use App\Models\InstallmentApplySocieties;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InstallmentController;
@@ -26,4 +27,6 @@ Route::group(['prefix' => '/v1'], function () {
 Route::group(['prefix' => '/v1/validators', 'middleware' => ['auth:sanctum', EnsureUserIsValidator::class]], function () {
     Route::get('/validations', [DataValidationController::class, "getValidationRequests"]);
     Route::post('/validations/{validation}', [DataValidationController::class, "setValidationStatus"]);
+
+    Route::get('/installments', [InstallmentController::class, "getInstallmentApplicationRequests"]);
 });
