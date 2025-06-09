@@ -25,4 +25,5 @@ Route::group(['prefix' => '/v1'], function () {
 
 Route::group(['prefix' => '/v1/validators', 'middleware' => ['auth:sanctum', EnsureUserIsValidator::class]], function () {
     Route::get('/validations', [DataValidationController::class, "getValidationRequests"]);
+    Route::post('/validations/{validation}', [DataValidationController::class, "setValidationStatus"]);
 });
