@@ -10,6 +10,38 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function register(Request $request) {
+        $validated = $request->validate([
+            "id_card_number" => "required|unique:societies,id_card_number",
+            "password" => "required",
+            "name" => "required",
+            "born_date" => "required|date",
+            "gender" => "required",
+            "address" => "required",
+            "regional_id" => "required|exists:regionals,id",
+        ]);
+
+        $valid_genders = ["male", "female"];
+
+        $isGenderValid = false;
+        foreach($valid_genders as $gender) {
+            if ($gender == $validated["gender"]) {
+                $isGenderValid = true;
+                break;
+            }
+        }
+
+        if (!$isGenderValid) {
+            return response()->json(["message" => "gender must be either 'male' or 'female'"]);
+        }
+
+        $validated["password"] = Hash::make($validated["password"]);
+
+        $society = Society::create($validated);
+
+        return response()->json(["message" => "registration successful", "society" => $society]);
+    }
+
     public function login(Request $request)
     {
         $validated = $request->validate([

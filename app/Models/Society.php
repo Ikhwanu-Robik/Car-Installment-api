@@ -11,10 +11,24 @@ class Society extends Authenticatable
 
     protected $table = 'societies';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'id_card_number',
         'password',
         'name',
+        'born_date',
+        'gender',
+        'address',
+        'regional_id',
+    ];
+
+    protected $hidden = [
+        'password',
+        'born_date',
+        'gender',
+        'address',
+        'regional_id',
     ];
 
     protected function regional()
