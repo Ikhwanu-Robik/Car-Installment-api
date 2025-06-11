@@ -45,9 +45,9 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validated = $request->validate([
-            'username' => "sometimes",
-            'id_card_number' => 'sometimes|numeric',
-            'password' => 'required'
+            'username' => "sometimes|exists:users,username",
+            'id_card_number' => 'sometimes|numeric|exists:societies,id_card_number',
+            'password' => 'required|string'
         ]);
 
         $isUser = isset($validated["username"]) ? true : false;
