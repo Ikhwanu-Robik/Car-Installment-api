@@ -60,7 +60,19 @@ class DataValidationController extends Controller
     }
 
     public function getValidationRequests(Request $request) {
-        $validations = Validation::with('validator')->get();
+        $validations = DB::table("validations")->join("societies", "validations.society_id", "=", "societies.id")->get(["validations.id", "societies.name", "status", "job", "job_description", "reason_accepted", "validator_notes", "validator_id"]);
+        $validators = DB::table("validators")->get(["id", "name"]);
+
+        foreach ($validations as $validation) {
+            foreach ($validators as $validator) {
+                if ($validator->id == $validation->validator_id) {
+                    $validation->validator_name = $validator->name;
+                }
+                else {
+                    $validation->validator_name = null;
+                }
+            }
+        }
 
         return response()->json(["validations" => $validations]);
     }
