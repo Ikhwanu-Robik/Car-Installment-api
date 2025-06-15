@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SocietyController;
 use App\Http\Middleware\EnsureUserIsValidator;
 use App\Models\InstallmentApplySocieties;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,8 @@ Route::group(['prefix' => '/v1'], function () {
 });
 
 Route::group(['prefix' => '/v1/validators', 'middleware' => ['auth:sanctum', EnsureUserIsValidator::class]], function () {
+    Route::get("/societies/{id_card_number}", [SocietyController::class, "findByIdCardNumber"]);
+
     Route::get('/validations', [DataValidationController::class, "getValidationRequests"]);
     Route::post('/validations/{validation}', [DataValidationController::class, "setValidationStatus"]);
 

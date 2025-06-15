@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Regional;
+use App\Models\Validation;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -31,9 +33,13 @@ class Society extends Authenticatable
         'regional_id',
     ];
 
-    protected function regional()
+    public function regional()
     {
         return $this->belongsTo(Regional::class);
+    }
+
+    public function validation() {
+        return $this->hasOne(Validation::class);
     }
 
     // protected $hidden = [
